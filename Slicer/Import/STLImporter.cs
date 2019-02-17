@@ -31,6 +31,58 @@ namespace Slicer.Import
         public void Import(Stream stream)
         {
             model.Clear();
+            if (IsBinary(stream))
+                ReadBinary(stream);
+            else
+                ReadASCII(stream);
+        }
+
+        private bool IsBinary(Stream stream)
+        {
+            if (stream.Length < 84)
+                return false;
+            using (BinaryReader reader = new BinaryReader(stream, Encoding.Default, true))
+            {
+                reader.ReadBytes(80);
+                UInt32 count = reader.ReadUInt32();
+                stream.Position = 0;
+                return stream.Length == count * 50 + 84;
+            }
+        }
+
+        private void ReadBinary(Stream stream)
+        {
+            using(BinaryReader reader = new BinaryReader(stream, Encoding.Default, true))
+            {
+                reader.ReadBytes(80);
+                UInt32 count = reader.ReadUInt32();
+                for(UInt32 i = 0; i < count; i++)
+                {
+                    Facet facet = new Facet();
+                    facet.Normal.X = reader.ReadSingle();
+                    facet.Normal.Y = reader.ReadSingle();
+                    facet.Normal.Z = reader.ReadSingle();
+
+                    facet.Vertex1.X = reader.ReadSingle();
+                    facet.Vertex1.Y = reader.ReadSingle();
+                    facet.Vertex1.Z = reader.ReadSingle();
+
+                    facet.Vertex2.X = reader.ReadSingle();
+                    facet.Vertex2.Y = reader.ReadSingle();
+                    facet.Vertex2.Z = reader.ReadSingle();
+
+                    facet.Vertex3.X = reader.ReadSingle();
+                    facet.Vertex3.Y = reader.ReadSingle();
+                    facet.Vertex3.Z = reader.ReadSingle();
+
+                    reader.ReadUInt16();
+                    model.Facets.Add(facet);
+                }
+            }
+        }
+
+        private void ReadASCII(Stream stream)
+        {
             using (StreamReader reader = new StreamReader(stream, Encoding.ASCII, false, 4096, true))
             {
                 String line = reader.ReadLine()?.Trim();
