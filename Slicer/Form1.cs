@@ -36,8 +36,15 @@ namespace Slicer
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 STLImporter importer = new STLImporter(model);
-                importer.Import(openFileDialog1.FileName);
-
+                try
+                {
+                    importer.Import(openFileDialog1.FileName);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Не могу открыть файл!\n{openFileDialog1.FileName}\n{ex.Message}", "Ошибка!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    model.Clear();
+                }
             }
         }
     }
