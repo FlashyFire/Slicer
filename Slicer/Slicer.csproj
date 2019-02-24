@@ -64,6 +64,7 @@
     <Compile Include="Import\STLImporter.cs" />
     <Compile Include="ObjectModel\Facet.cs" />
     <Compile Include="ObjectModel\Model.cs" />
+    <Compile Include="ObjectModel\ModelDimensions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
